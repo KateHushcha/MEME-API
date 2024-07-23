@@ -10,7 +10,10 @@ class GetMemeById(BaseApi):
             f'http://167.172.172.115:52355/meme/{meme_id}',
             headers=header
         )
-        self.response_json = self.response.json()
+        try:
+            self.response_json = self.response.json()
+        except requests.exceptions.JSONDecodeError:
+            self.response_json = self.response.status_code
 
     @allure.step('Checking meme id')
     def check_meme_id(self, meme_id):

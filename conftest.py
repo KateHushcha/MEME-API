@@ -3,6 +3,8 @@ import requests
 from endpoints.auth_token import GetAuthToken
 from tests.data import payloads
 from endpoints.meme_put_update import MemePutUpdate
+from endpoints.meme_by_id import GetMemeById
+from endpoints.meme_deletion import MemeDeleted
 
 
 @pytest.fixture(scope='session')
@@ -34,9 +36,19 @@ def new_meme_for_test(token):
     )
     new_meme_id = response.json()["id"]
     yield new_meme_id
-    requests.delete(f'http://167.172.172.115:52355/meme/{new_meme_id}')
+    requests.delete(f'http://167.172.172.115:52355/meme/{new_meme_id}', headers=headers)
 
 
 @pytest.fixture()
 def updated_with_put():
     return MemePutUpdate()
+
+
+@pytest.fixture()
+def getting_meme_by_id():
+    return GetMemeById()
+
+
+@pytest.fixture()
+def deleted_meme():
+    return MemeDeleted()

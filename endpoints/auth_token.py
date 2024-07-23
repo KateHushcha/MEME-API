@@ -9,7 +9,12 @@ class GetAuthToken(BaseApi):
             'http://167.172.172.115:52355/authorize',
             json=payload
         )
-        self.response_json = self.response.json()
-        token = self.response_json['token']
-        return token
+        try:
+            self.response_json = self.response.json()
+            token = self.response_json['token']
+            return token
+        except requests.exceptions.JSONDecodeError:
+            self.response_json = self.response.status_code
+
+        
     
