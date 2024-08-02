@@ -16,3 +16,8 @@ class MemeDeleted(BaseApi):
             self.response_json = self.response.json()
         except requests.exceptions.JSONDecodeError:
             self.response_json = {"message": self.response.text}
+    def meme_is_deleted(self, meme_id):
+        self.response = requests.get(
+            f'http://167.172.172.115:52355/meme/{meme_id}'
+        )
+        return self.response.status_code == 401

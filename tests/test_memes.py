@@ -1,50 +1,47 @@
 import allure
 import pytest
 from data import payloads
-from endpoints.meme_new import NewMemePost
-from endpoints.auth_token import GetAuthToken
 from endpoints.meme_all import GetAllMemes
 
 
 @allure.feature('Token')
 @allure.title('Getting token')
-def test_auth_token():
-    getting_token = GetAuthToken()
-    getting_token.get_token(payloads.auth_name)
-    assert getting_token.check_status_code_is(200)
+def test_auth_token(token_for_auth):
+    token_for_auth.get_token(payloads.auth_name)
+    assert token_for_auth.check_status_code_is(200)
+    assert token_for_auth.token_is_returned()
 
 
 @allure.feature('Token')
 @allure.title('Invalid token')
-def test_auth_token_invalid():
-    getting_token = GetAuthToken()
-    getting_token.get_token(payloads.invalid_name)
-    assert getting_token.check_status_code_is(400)
+def test_auth_token_invalid(token_for_auth):
+    token_for_auth.get_token(payloads.invalid_name)
+    assert token_for_auth.check_status_code_is(400)
 
 
 @allure.feature('New memes')
 @allure.title('New Meme Testing')
-def test_new_meme(token):
-    create_new_meme = NewMemePost()
-    create_new_meme.create_meme(payloads.brand_new_meme, token)
-    assert create_new_meme.check_status_code_is(200)
-    assert create_new_meme.meme_text_is(payloads.brand_new_meme['text'])
+def test_new_meme(for_new_meme, token):
+    for_new_meme.create_meme(payloads.brand_new_meme, token)
+    assert for_new_meme.check_status_code_is(200)
+    assert for_new_meme.meme_text_is(payloads.brand_new_meme['text'])
+    assert for_new_meme.meme_url_is(payloads.brand_new_meme['url'])
+    assert for_new_meme.meme_tags_are(payloads.brand_new_meme['tags'])
+    assert for_new_meme.meme_info_is(payloads.brand_new_meme['info'])
 
 
 @allure.title('Getting all memes')
 @allure.story('Get')
-def test_get_all_memes(token):
-    get_all = GetAllMemes()
-    get_all.get_all_memes(token)
-    assert get_all.check_status_code_is(200)
+def test_get_all_memes(all_memes, token):
+    all_memes.get_all_memes(token)
+    assert all_memes.check_status_code_is(200)
 
 
 @allure.title('Getting all memes')
 @allure.story('Get')
-def test_get_all_memes_without_token():
-    get_all = GetAllMemes()
-    get_all.get_all_memes(token=None)
-    assert get_all.check_status_code_is(401)
+def test_get_all_memes_without_token(all_memes):
+    all_memes.get_all_memes(token=None)
+    assert all_memes.check_status_code_is(401)
 
 
 @allure.story('Get')
@@ -109,6 +106,7 @@ def test_meme_put_invalid_data(updated_with_put, new_meme_for_test, token):
 def test_meme_is_deleted(deleted_meme, new_meme_for_test, token):
     deleted_meme.meme_deletion(new_meme_for_test, token)
     assert deleted_meme.check_status_code_is(200)
+    assert deleted_meme.meme_is_deleted(new_meme_for_test)
 
 
 @allure.feature('Main')

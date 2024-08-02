@@ -5,6 +5,8 @@ from tests.data import payloads
 from endpoints.meme_put_update import MemePutUpdate
 from endpoints.meme_by_id import GetMemeById
 from endpoints.meme_deletion import MemeDeleted
+from endpoints.meme_new import NewMemePost
+from endpoints.meme_all import GetAllMemes
 
 
 @pytest.fixture(scope='session')
@@ -16,27 +18,13 @@ def token():
 
 @pytest.fixture()
 def new_meme_for_test(token):
-    payload = {
-        "text": "When you deploy to production and nothing breaks.",
-        "url": "https://i.imgflip.com/4/1bim.jpg",
-        "tags": ["deployment", "programming", "success", "funny"],
-        "info": {
-            "description": "A meme that captures the rare and joyful moment when a deployment to production goes smoothly without any issues. The image typically features someone celebrating or expressing relief.",
-            "author": "Unknown",
-            "date": "2024-07-11"
-        }
-    }
-    headers = {'Content-Type': 'application/json',
-               'Authorization': token
-    }
-    response = requests.post(
-        'http://167.172.172.115:52355/meme',
-        json=payload,
-        headers=headers
-    )
-    new_meme_id = response.json()["id"]
+    payload = payloads.brand_new_meme
+    new_meme_for_test = NewMemePost()
+    new_meme_for_test.create_meme(payload=payload, token=token)
+    new_meme_id = new_meme_for_test.response.json()["id"]
     yield new_meme_id
-    requests.delete(f'http://167.172.172.115:52355/meme/{new_meme_id}', headers=headers)
+    deleted_meme_after = MemeDeleted()
+    deleted_meme_after.meme_deletion(new_meme_id)
 
 
 @pytest.fixture()
@@ -52,3 +40,20 @@ def getting_meme_by_id():
 @pytest.fixture()
 def deleted_meme():
     return MemeDeleted()
+
+
+@pytest.fixture()
+def token_for_auth():
+    return GetAuthToken()
+
+
+@pytest.fixture
+def for_new_meme():
+    return NewMemePost()
+
+
+@pytest.fixture()
+def all_memes():
+    return GetAllMemes()
+
+

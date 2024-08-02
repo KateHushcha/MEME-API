@@ -17,3 +17,12 @@ class NewMemePost(BaseApi):
     @allure.step("Checking meme's text")
     def meme_text_is(self,text):
         return self.response_json['text'] == text
+    @allure.step("Checking meme's url")
+    def meme_url_is(self, url):
+        return self.response_json['url'] == url
+    @allure.step("Checking meme's tags")
+    def meme_tags_are(self,tags):
+        return self.response_json['tags'] == tags
+    @allure.step("Checking meme's info")
+    def meme_info_is(self, info):
+        return self.response_json['info'] == info

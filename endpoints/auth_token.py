@@ -15,6 +15,5 @@ class GetAuthToken(BaseApi):
             return token
         except requests.exceptions.JSONDecodeError:
             self.response_json = self.response.status_code
-
-        
-    
+    def token_is_returned(self):
+        return self.response_json['token'] != None
